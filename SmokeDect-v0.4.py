@@ -12,10 +12,12 @@ DEBUG = True
 AVERAGE_S_THRESHOLD = 70
 HSV_V_BLOCK_COUNT = 50
 CANDIDATE_BLOCK_SIZE = 20
-
+SMOKE = False
+SMOKING = False
 if __name__ == "__main__":
+    countSmmoke = 0
     cap = cv2.VideoCapture(
-        "./smoke.mp4")
+        "./112.mp4")
     ret, start_frame = cap.read()
     start_gray_frame = cv2.cvtColor(start_frame, cv2.COLOR_BGR2GRAY)
     fgbg = cv2.createBackgroundSubtractorMOG2(
@@ -66,6 +68,7 @@ if __name__ == "__main__":
                 if fgmask_clip.any():
                     if DEBUG:
                         cv2.rectangle(frame, (m, n), (m+block_width, n+block_height), (255, 0, 0))
+                        SMOKE = True
 
                     # average of S
                     candidate_clip_S = candidate_clip[:, :, 1]
@@ -79,6 +82,7 @@ if __name__ == "__main__":
                     if (average_S < AVERAGE_S_THRESHOLD):
                         if DEBUG:
                             cv2.rectangle(frame, (m, n), (m+block_width, n+block_height), (0, 255, 0))
+                            SMOKING = True
 
                         # the value of V in the smoke area is higher
                         HSV_V_all_block_ndarray = np.array(HSV_V_all_block)
@@ -89,9 +93,13 @@ if __name__ == "__main__":
 
                         if (np.average(HSV_V_50_block) - average_V < 5):
                             cv2.rectangle(frame, (m, n), (m+block_width, n+block_height), (0, 0, 255))
+                            SMOKING = False 
+                            SMOKE = False
+                            print("NO HAVE PEOPLE SMOKING")
                             
-
-        # cv2.imshow("fgmask", fgmask)
+        if (SMOKE == True & SMOKING == True):
+            print("HAVE PEOPLE SMOKING")
+        cv2.imshow("fgmask", fgmask)
         cv2.imshow("frame", frame)
 
         # store V of 50 frames before current frame
