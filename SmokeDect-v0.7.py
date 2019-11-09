@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
 
     cap = cv2.VideoCapture(
-        "F:/code/python/detect/smoke/Video-Smoke-Detector-master/Video-Smoke-Detector-master/smoke.mp4")
+        "./smoke.mp4")
     ret, start_frame = cap.read()
     start_gray_frame = cv2.cvtColor(start_frame, cv2.COLOR_BGR2GRAY)
     fgbg = cv2.createBackgroundSubtractorMOG2(
